@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Deposit - Automated</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; }
+    .address { font-family: monospace; }
+  </style>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+  <div class="max-w-2xl mx-auto p-8">
+    <h1 class="text-4xl font-bold text-center mb-2">Deposit Crypto</h1>
+    <p class="text-center text-gray-400 mb-8">Send ETH to the address below • Instant confirmation</p>
+
+    <!-- Your Receive Address -->
+    <div class="bg-gray-900 rounded-2xl p-8 mb-8 border border-gray-800">
+      <p class="text-gray-400 mb-3">Send ETH to this address:</p>
+      <div class="flex items-center gap-3 bg-black p-4 rounded-xl address text-sm break-all mb-4" id="receive-address">
+        0x7B8fb779D7CA20a1Be0A7691Fc0Cb73891AEebB9
+      </div>
+      
+      <button onclick="copyAddress()" 
+              class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-xl text-sm font-medium">
+        📋 Copy Address
+      </button>
+
+      <div class="mt-6 flex justify-center">
+        <div id="qrcode" class="bg-white p-4 rounded-2xl"></div>
+      </div>
+    </div>
+
+    <!-- User Input -->
+    <div class="bg-gray-900 rounded-2xl p-8 border border-gray-800">
+      <label class="block text-gray-400 mb-2">Your Ethereum Address (for tracking)</label>
+      <input type="text" id="userAddress" 
+             class="w-full bg-black border border-gray-700 rounded-xl px-5 py-4 text-white address focus:outline-none focus:border-blue-500"
+             placeholder="0xYourAddressHere...">
+      
+      <button onclick="submitDeposit()" 
+              class="mt-6 w-full bg-green-600 hover:bg-green-700 py-4 rounded-2xl font-semibold text-lg">
+        I Have Sent the Deposit
+      </button>
+
+      <div id="status" class="mt-6 text-center text-sm"></div>
+    </div>
+
+    <div class="text-center mt-10 text-xs text-gray-500">
+      <p>Payments are sent directly to the wallet above.</p>
+      <p class="mt-1">Check status on <a href="https://etherscan.io/address/0x7B8fb779D7CA20a1Be0A7691Fc0Cb73891AEebB9" 
+         target="_blank" class="text-blue-400 hover:underline">Etherscan</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Generate QR code
+    function generateQR() {
+      const qrContainer = document.getElementById("qrcode");
+      qrContainer.innerHTML = "";
+      new QRCode(qrContainer, {
+        text: "0x7B8fb779D7CA20a1Be0A7691Fc0Cb73891AEebB9",
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+      });
+    }
+
+    function copyAddress() {
+      navigator.clipboard.writeText("0x7B8fb779D7CA20a1Be0A7691Fc0Cb73891AEebB9");
+      alert("✅ Address copied to clipboard!");
+    }
+
+    function submitDeposit() {
+      const userAddr = document.getElementById("userAddress").value.trim();
+      const statusEl = document.getElementById("status");
+
+      if (!userAddr || !userAddr.startsWith("0x") || userAddr.length !== 42) {
+        statusEl.innerHTML = `<span class="text-red-400">Please enter a valid Ethereum address.</span>`;
+        return;
+      }
+
+      statusEl.innerHTML = `
+        <span class="text-green-400">
+          Thank you! Deposit received from <span class="address">${userAddr}</span><br>
+          <span class="text-sm">We are tracking your payment. Check Etherscan for confirmation.</span>
+        </span>
+      `;
+
+      console.log("User deposit claimed from:", userAddr);
+    }
+
+    // Initialize
+    window.onload = generateQR;
+  </script>
+</body>
+</html>
